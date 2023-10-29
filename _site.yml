@@ -4,7 +4,7 @@ navbar:
   title: "Home"
   right:
     - text: "Academic Experience"
-      href: academic.html
+      href: academics.html
     - text: "Projects"
       href: projects.html
     - icon: fa-envelope fa-lg
