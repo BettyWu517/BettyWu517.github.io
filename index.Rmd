@@ -6,36 +6,78 @@ output:
     toc_float: true
 ---
 
-# Introduction
+## Introduction
 
-Welcome to Qianying's Homework page. My name is Qianying .....
+Welcome to Qianying's Homework page. My name is Qianying Wu. I'm a first year MS student in Biostatistics at Columbia University Mailman School of Public Health. Check my [resume](academics.html) here. In this website, you are able to find my [github page](https://github.com/BettyWu517) and my email address on the upper right corner.
+
+## Problem 2
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(p8105.datasets)
+library(plotly)
+library(flexdashboard)
+```
 
 
+  
+```{r}
+data("instacart")
 
+instacart = 
+  instacart |> 
+  as_tibble()
 
-![](https://media.giphy.com/media/drXGoW1iudhKw/giphy.gif)
+top_aisle <- instacart |>
+  count(aisle, sort = TRUE) |>
+  head(10)
 
-You can add text
+plot_ly(top_aisle, x = ~aisle, y = ~n, type = "bar", name = "Top 10 aisles") |>
+  layout(title = "Top 10 aisles")
+```
 
--   and lists
--   with extra bullets
+The graph presented the top 10 aisles and their counts from the Instacart Dataset. 
 
-You can *FORMAT* and **bold?**
-
-This is a [link](http://google.com/) to a good data science tool
-
-Here is a link to [p8105] (<http://p8105.com>).
-
-Here is a link to the [about](about.html) page.
-
-you can still use R!
 
 ```{r}
+# Random Sampling 
+set.seed(123)  
+sample_instacart <- instacart |>
+  sample_n(10000)
+
+
+plot_hour_dow <- sample_instacart |>
+  plot_ly(y = ~order_hour_of_day,
+          x = ~factor(order_dow),
+          type = "box",
+          color = ~factor(order_dow),
+          colors = "Set3")
+plot_hour_dow
+```
+
+The plot shows the boxplot in the hour of the day on which the order was placed in different day of the week on which the order was placed.
+
+
+```{r}
+filtered_data <- sample_instacart |>
+  group_by(user_id) |>
+  filter(n() >= 2)
+
+plot_order_days <- plot_ly(data = filtered_data,
+                           x = ~order_number,
+                           y = ~days_since_prior_order,
+                           type = "scatter",
+                           mode = "markers",
+                           marker = list(size = 5, opacity = 0.5),
+                           text = ~paste('Order Number: ', order_number, '<br>Days since last order: ', days_since_prior_order))
+
+plot_order_days
 
 ```
 
-## Here's new section
+The plot shows the scatterplot, with the x axis representing the sequence number of the order for each user, and the y axis representing the number of days since the user's last order for the user_id with more than 2 entries. 
 
-My cat is ted. This is ted.
 
-\#![](images/)
