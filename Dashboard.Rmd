@@ -1,0 +1,80 @@
+---
+title: "Qianying's Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(plotly)
+library(tidyverse)
+library(p8105.datasets)
+data("instacart")
+instacart = 
+  instacart |> 
+  as_tibble() |>
+  drop_na()
+
+top_aisle <- instacart |>
+  count(aisle, sort = TRUE) |>
+  head(10)
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+plot_ly(top_aisle, x = ~aisle, y = ~n, type = "bar", 
+        color = "Set2",
+        name = "Top 10 aisles") |>
+  layout(title = "Top 10 aisles")
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+# Random Sampling 
+set.seed(123)  
+sample_instacart <- instacart |>
+  sample_n(10000)
+
+
+plot_hour_dow <- sample_instacart |>
+  plot_ly(y = ~order_hour_of_day,
+          x = ~factor(order_dow),
+          type = "box",
+          color = ~factor(order_dow),
+          colors = "Set3") |>
+    layout(title = "Hours vs. Order_dow")
+
+plot_hour_dow
+```
+
+### Chart C
+
+```{r}
+filtered_data <- sample_instacart |>
+  group_by(user_id) |>
+  filter(n() >= 2)
+
+plot_order_days <- plot_ly(data = filtered_data,
+                           x = ~order_number,
+                           y = ~days_since_prior_order,
+                           type = "scatter",
+                           mode = "markers",
+                           Color = "Set1",
+                           marker = list(size = 5, opacity = 0.5),
+                           text = ~paste('Order Number: ', order_number, '<br>Days since last order: ', days_since_prior_order)) |>
+  layout(title = "Order_number vs. Days since prior order")
+
+
+plot_order_days
+```
+
